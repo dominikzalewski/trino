@@ -184,6 +184,9 @@ public class JdbcRecordCursor
             return resultSet.next();
         }
         catch (SQLException | RuntimeException e) {
+            if (null != e.getCause()) {
+                e.getCause().printStackTrace();
+            }
             throw handleSqlException(e);
         }
     }

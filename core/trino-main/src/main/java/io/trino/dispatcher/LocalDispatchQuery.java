@@ -142,7 +142,7 @@ public class LocalDispatchQuery
     {
         if (stateMachine.transitionToDispatching()) {
             try {
-                querySubmitter.accept(queryExecution);
+               querySubmitter.accept(queryExecution);
                 if (notificationSentOrGuaranteed.compareAndSet(false, true)) {
                     queryExecution.addFinalQueryInfoListener(queryMonitor::queryCompletedEvent);
                 }

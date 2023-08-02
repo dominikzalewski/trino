@@ -13,6 +13,7 @@
  */
 package io.trino.plugin.postgresql;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import io.airlift.log.Logger;
 import io.trino.Session;
@@ -78,7 +79,7 @@ public final class PostgreSqlQueryRunner
             queryRunner.installPlugin(new PostgreSqlPlugin());
             queryRunner.createCatalog("postgresql", "postgresql", connectorProperties);
 
-            copyTpchTables(queryRunner, "tpch", TINY_SCHEMA_NAME, createSession(), tables);
+            copyTpchTables(queryRunner, "tpch", "sf300", createSession(), tables);
 
             return queryRunner;
         }
@@ -103,7 +104,8 @@ public final class PostgreSqlQueryRunner
                 new TestingPostgreSqlServer(true),
                 ImmutableMap.of("http-server.http.port", "8080"),
                 ImmutableMap.of(),
-                TpchTable.getTables());
+                ImmutableList.of(TpchTable.CUSTOMER));
+                //TpchTable.getTables());
 
         queryRunner.installPlugin(new JmxPlugin());
         queryRunner.createCatalog("jmx", "jmx");

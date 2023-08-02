@@ -95,7 +95,7 @@ import static java.util.stream.Collectors.toSet;
 public class TpchMetadata
         implements ConnectorMetadata
 {
-    public static final String TINY_SCHEMA_NAME = "tiny";
+    public static final String TINY_SCHEMA_NAME = "sf100";
     public static final double TINY_SCALE_FACTOR = 0.01;
 
     public static final List<String> SCHEMA_NAMES = ImmutableList.of(
