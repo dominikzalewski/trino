@@ -14,6 +14,7 @@
 package io.trino.plugin.jdbc;
 
 import io.trino.plugin.jdbc.credential.EmptyCredentialProvider;
+import io.trino.plugin.jdbc.jmx.StatisticsAwareConnectionFactory;
 import org.h2.Driver;
 import org.testng.annotations.Test;
 
@@ -30,9 +31,10 @@ public class TestLazyConnectionFactory
     public void testNoConnectionIsCreated()
             throws Exception
     {
-        ConnectionFactory failingConnectionFactory = session -> {
-            throw new AssertionError("Expected no connection creation");
-        };
+        StatisticsAwareConnectionFactory failingConnectionFactory = new StatisticsAwareConnectionFactory(
+                session -> {
+                    throw new AssertionError("Expected no connection creation");
+                });
 
         try (LazyConnectionFactory lazyConnectionFactory = new LazyConnectionFactory(failingConnectionFactory);
                 Connection ignored = lazyConnectionFactory.openConnection(SESSION)) {
@@ -47,7 +49,7 @@ public class TestLazyConnectionFactory
         BaseJdbcConfig config = new BaseJdbcConfig()
                 .setConnectionUrl(format("jdbc:h2:mem:test%s;DB_CLOSE_DELAY=-1", System.nanoTime() + ThreadLocalRandom.current().nextLong()));
 
-        try (DriverConnectionFactory h2ConnectionFactory = new DriverConnectionFactory(new Driver(), config, new EmptyCredentialProvider());
+        try (StatisticsAwareConnectionFactory h2ConnectionFactory = new StatisticsAwareConnectionFactory(new DriverConnectionFactory(new Driver(), config, new EmptyCredentialProvider()));
                 LazyConnectionFactory lazyConnectionFactory = new LazyConnectionFactory(h2ConnectionFactory)) {
             Connection connection = lazyConnectionFactory.openConnection(SESSION);
             connection.close();

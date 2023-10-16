@@ -43,7 +43,7 @@ public class JdbcDiagnosticModule
         Provider<CatalogName> catalogName = binder.getProvider(CatalogName.class);
         newExporter(binder).export(Key.get(JdbcClient.class, StatsCollecting.class))
                 .as(generator -> generator.generatedNameOf(JdbcClient.class, catalogName.get().toString()));
-        newExporter(binder).export(Key.get(ConnectionFactory.class, StatsCollecting.class))
+        newExporter(binder).export(Key.get(StatisticsAwareConnectionFactory.class))
                 .as(generator -> generator.generatedNameOf(ConnectionFactory.class, catalogName.get().toString()));
         newExporter(binder).export(JdbcClient.class)
                 .as(generator -> generator.generatedNameOf(CachingJdbcClient.class, catalogName.get().toString()));
@@ -68,8 +68,7 @@ public class JdbcDiagnosticModule
 
     @Provides
     @Singleton
-    @StatsCollecting
-    public static ConnectionFactory createConnectionFactoryWithStats(@ForBaseJdbc ConnectionFactory connectionFactory)
+    public static StatisticsAwareConnectionFactory createConnectionFactoryWithStats(@ForBaseJdbc ConnectionFactory connectionFactory)
     {
         return new StatisticsAwareConnectionFactory(connectionFactory);
     }
